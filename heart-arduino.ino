@@ -2,12 +2,14 @@
 
 #define NUM_LEDS 256
 #define DATA_PIN 13
+#define SCALE 500
 
 int brightness = 0;
 float hue = 0;
 float inc = 0;
 float hueInc = .3;
 int size = 16;
+float c = 0;
 
 CRGB leds[NUM_LEDS];
 int heart[16][16] = 
@@ -33,17 +35,21 @@ int heart[16][16] =
 void setup() {
   FastLED.addLeds<WS2812, DATA_PIN, RGB>(leds, NUM_LEDS);
   LEDS.setBrightness(100);
-  drawHeart();
 }
 
 void drawHeart() {
   for (int row = 0; row < 16; row++) {
     for (int col = 0; col < 16; col++) {
+      uint16_t  noiseVal = inoise8(row * SCALE, col * SCALE, c);
+      // float mappedNoise = map(noiseVal, 0 , 255, -100, 255);
+      // if (mappedNoise<0){
+      //   mappedNoise = 10;
+      // }
       if(heart[row][col] == 1){
-        if(row%2 == 1){ // IDK WHY THE OFF ROWS ARE ALL OFF BY ONE SO IM JUST COMPENSATING FOR THAT WITH THIS
-          leds[(col-1)+(row*16)]=CRGB(0,10,0);
+        if(row%2 == 1){ // IDK WHY THE ODD ROWS ARE ALL OFF BY ONE SO IM JUST COMPENSATING FOR THAT WITH THIS
+          leds[(col-1)+(row*16)]=CRGB(0,noiseVal,0);
         } else{
-            leds[(col)+(row*16)]=CRGB(0,10,0);
+            leds[(col)+(row*16)]=CRGB(0,noiseVal,0);
         }
         
       }
@@ -53,6 +59,7 @@ void drawHeart() {
     }
   }
    FastLED.show();
+   c += 4;
 }
 
 // void bootUp() {
@@ -65,6 +72,7 @@ void drawHeart() {
 // }
 
 void loop() {
+  drawHeart();
   // hue = inc;
   // inc += .5;
 

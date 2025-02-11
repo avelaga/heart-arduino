@@ -3,8 +3,9 @@
 #define NUM_LEDS 256
 #define DATA_PIN 13
 #define SCALE 2000
+#define MAX_BRIGHTNESS 100
 
-int brightness = 0;
+float brightness = 0;
 float hue = 0;
 float inc = 0;
 float hueInc = .3;
@@ -34,7 +35,16 @@ int heart[16][16] =
 
 void setup() {
   FastLED.addLeds<WS2812, DATA_PIN, RGB>(leds, NUM_LEDS);
-  LEDS.setBrightness(100);
+  bootUp();
+}
+
+void bootUp() {
+  while (brightness < MAX_BRIGHTNESS) {
+    LEDS.setBrightness(brightness);
+    loop();
+    brightness += .5;
+    // delay(5);
+  }
 }
 
 void drawHeart() {
@@ -63,24 +73,6 @@ void drawHeart() {
    c += 4;
 }
 
-// void bootUp() {
-//   while (brightness < 255) {
-//     LEDS.setBrightness(brightness);
-//     loop();
-//     brightness += 1;
-//     delay(5);
-//   }
-// }
-
 void loop() {
   drawHeart();
-  // hue = inc;
-  // inc += .5;
-
-  // for (int i = 0; i < NUM_LEDS; i++) {
-  //   leds[i] = CHSV(hue, 255, 255);
-  //   hue += .5; // incremenration of hues in the strip
-  // }
-
-  // FastLED.show();
 }
